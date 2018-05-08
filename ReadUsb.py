@@ -2,7 +2,7 @@ import sys
 import usb.core
 import usb.util
 import os
-
+from subprocess import Popen
 
 # Reading usb devices
 dev = usb.core.find(find_all=True) 
@@ -29,7 +29,6 @@ if not os.path.exists(batchPath):
 # create batch files for sim100
 for sim in sims: 
     # Retrieve the string representation of the sim100
-    print(sim)
     serialNum = usb.util.get_string(sim,sim.iSerialNumber)
 
     # Creating the individual batch files
@@ -39,5 +38,10 @@ for sim in sims:
     file.write("\"-if=SICK SERVICE:DIV05_SERVICE@USB?COLA2\" ")  
     file.write("\"-usbpath=\\\\?//\\usb#vid_19a2&pid_5000#" + serialNum + "#{40f8d7c6-6856-483d-ac31-dc646ca2d89b}\"")
     file.write(" -descriptions=SDD/sim100.sdd -file=SDD_Manifest\\SIM100manifestsdd.spk")
-
+    file.write("\npause")
     file.close()
+
+for batchFile in os.listdir(batchPath):
+    path = os.getcwd() + "\\batchfiles\\" + batchFile
+    print(path)
+    p = Popen(path)
