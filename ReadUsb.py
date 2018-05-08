@@ -1,12 +1,13 @@
 import sys
 import usb.core
 import usb.util
+import os
 
-#help(usb.core)
+
 # Reading usb devices
-
 dev = usb.core.find(find_all=True) 
 
+# list that holds the sim device objects
 sims = []
 
 simVendorId = 0x19a2
@@ -20,11 +21,18 @@ for cfg in dev:
 if not sims:
     raise ValueError('SIM100 not found')
 
+# creates a directory to hold sim batch files if it does not already exist
+batchPath = "batchfiles/"
+if not os.path.exists(batchPath):
+    os.makedirs(batchPath)
+# create batch files for sim100
 for sim in sims: 
+    # Retrieve the string representation of the sim100
+    serialNum = usb.util.get_string(sim,sim.iSerialNumber)
    # print(usb.util.get_string(sim,256,1))
-    file = open("WriteSDD.bat","a")
-    file.write("..\\PackageLoaderUSB\\jre\\bin\\java -Djava.library.path=./dll/ -jar ..\\PackageLoaderUSB\\lib\\cltool.jar download")
-    file.write(str(sim.idProduct) + "\n")
-    file.write(str(sim.idVendor) + "\n")
+    file = open(batchPath + serialNum + ".bat","w")
+    file.write("..\\PackageLoaderUSB\\jre\\bin\\java -Djava.library.path=./dll/ -jar ..\\PackageLoaderUSB\\lib\\cltool.jar download ")
+    file.write("\"-if=SICK SERVICE:DIV05_SERVICE@USB?COLA2\"")
+
     
     file.close()
