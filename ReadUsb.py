@@ -14,7 +14,6 @@ simVendorId = 0x19a2
 simProductId = 0x5000
 
 for cfg in dev:
-
     if cfg.idVendor == simVendorId and cfg.idProduct == simProductId:
         sims.append(cfg)
 
